@@ -6,6 +6,7 @@ Description: java implementation of a LR(1) parser
 Data structures:
 Queue: holds input
 Stack: holds stack items
+StackObj: holds state, nonterminal and terminal symbols
 */
 import java.util.ArrayList;
 import java.util.Stack;
@@ -61,7 +62,7 @@ class LR1{
                                 shift(5);
                                 break;
                             }else{
-                                System.out.println("Invalid input");
+                               
                                 return false;
                             }
                 }
@@ -105,7 +106,6 @@ class LR1{
                             }else if(input.matches("\\d+")){
                                 shift(5); break;
                             }else{
-                                System.out.println("Invalid input");
                                 return false;
                             }
                 } break;
@@ -130,7 +130,6 @@ class LR1{
                             }else if(input.matches("\\d+")){
                                 shift(5); break;
                             }else{
-                                System.out.println("Invalid input");
                                 return false;
                             }
                 } break;
@@ -144,7 +143,6 @@ class LR1{
                             }else if(input.matches("\\d+")){
                                 shift(5); break;
                             }else{
-                                System.out.println("Invalid input");
                                 return false;
                             }
                 } break;
@@ -217,7 +215,6 @@ class LR1{
                         stack.push(obj); 
                         break;
 					}else{
-						System.out.println("Invalid input");
                         break;
 					}
                 }
@@ -237,12 +234,19 @@ class LR1{
         StackObj first = stack.pop();
         
         StackObj result;
+        if(second.getTerminal().equals(")")){
+            op.setNonterminal("F"); result = op; 
+            op.setState(nonTermTable("F"));
+            stack.push(op);
+            return;
+        } 
         
         switch(op.getTerminal()){
             case "+": 
             case "-": result = calc(first, op ,second); break; 
             case "*": 
             case "/": result = calc(first, op ,second); break;
+            case ")": 
             default: result = new StackObj(); break;
         }
         stack.push(result);
@@ -313,7 +317,7 @@ class StackObj{
     private String terminal;
     private int state; 
     
-    StackObj(){
+    StackObj(){ // overloaded constructors to initialize the object
         this.nonterminal = "";
         this.terminal = "";
         this.state = 0;
